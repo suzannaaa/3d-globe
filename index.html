@@ -1,96 +1,388 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script defer src="/_vercel/insights/script.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
-    />
-    <title>Vercel HTML Starter</title>
-    <meta
-      name="description"
-      content="High-performance HTML based website template."
-    />
-  </head>
-  <body>
-    <h1>Vercel HTML Starter</h1>
-    <p>
-      This template is a simple, but powerful single
-      <code>index.html</code> file deployed to
-      <a href="https://vercel.com">Vercel</a>. When your site is deployed, all
-      static assets (like HTML, JavaScript, CSS, images, and more) are deployed
-      globally to every
-      <a href="https://vercel.com/docs/concepts/edge-network/overview"
-        >Vercel Edge Network</a
-      >
-      region.
-    </p>
-    <h2>Simple, privacy-friendly analytics</h2>
-    <p>
-      Want to understand your visitor traffic? Vercel Analytics gives you
-      first-party, privacy-friendly traffic analytics for your HTML site. This
-      template is already configured using the following script:
-    </p>
-    <pre><code>&lt;script defer src="/_vercel/insights/script.js"&gt;&lt;/script&gt;</code></pre>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/analytics">Vercel Analytics</a>.
-    </p>
-    <h2>Integrated with git</h2>
-    <p>
-      Deploying updates to your site is as simple as
-      <code>git push</code> thanks to Vercel's advanced
-      <a href="https://vercel.com/docs/concepts/git">Git Integration</a>.
-      Support for GitHub, GitLab, Bitbucket is zero-configuration, and with the
-      flexible Vercel CLI and API, you can integrate with any tool possible.
-    </p>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/git">Git Integration</a>.
-    </p>
-    <h2>Fast <code>gzip</code> compression</h2>
-    <p>
-      To help ensure the smallest possible file sizes for your static assets,
-      the Vercel Edge Network compresses files by default using
-      <code>gzip</code>. You can also optionally use
-      <code>brotli</code> compressesion if you prefer.
-    </p>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/edge-network/compression"
-        >compression</a
-      >.
-    </p>
-    <h2>Advanced routing configuration</h2>
-    <p>
-      Vercel gives you a variety of ways to configure the routing of your
-      website. For example, adding redirects, rewrites, or headers to your page.
-      While you can use <code>vercel.json</code> to define these through JSON,
-      you can also express your routing configuration as code using
-      <a href="https://vercel.com/docs/concepts/functions/edge-middleware"
-        >Vercel Edge Middleware</a
-      >.
-    </p>
-    <p>
-      Middleware runs before the
-      <a href="https://vercel.com/docs/concepts/edge-network/caching"
-        >Vercel Edge Network Cache</a
-      >, so you can configure routing exactly as your application needs. For
-      example, this template uses <code>middleware.js</code> defined in the root
-      of the repository to add additional security headers to the site:
-    </p>
-    <pre><code>referrer-policy: origin-when-cross-origin
-strict-transport-security: max-age=31536000; includeSubDomains; preload
-x-content-type-options: nosniff
-x-dns-prefetch-control: on
-x-frame-options: DENY</code></pre>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/functions/edge-middleware"
-        >Vercel Edge Middleware</a
-      >.
-    </p>
-  </body>
-</html>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hologram Globe with Tabs</title>
+<style>
+    /* Page & background */
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        font-family: "Inter", "Segoe UI", system-ui, Arial, sans-serif;
+    }
+
+    /* Layout container */
+    #globe-wrap {
+        position: relative;
+        width: 100%;
+        height: 90vh;
+    }
+
+    /* Tabs overlay */
+    #globe-tabs {
+        position: absolute;
+        left: 16px;
+        bottom: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        z-index: 10;
+        pointer-events: auto;
+        max-width: min(92vw, 720px);
+    }
+
+    .vgp-tab {
+        padding: 8px 12px;
+        border-radius: 999px;
+        font: 600 12px/1.2 "Inter", "Segoe UI", system-ui, Arial;
+        color: #0b1c47;
+        background: rgba(255, 255, 255, .92);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, .18);
+        border: 1px solid rgba(10, 23, 51, .08);
+        cursor: pointer;
+        user-select: none;
+        transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease;
+    }
+
+    .vgp-tab:hover {
+        transform: translateY(-1px);
+    }
+
+    .vgp-tab.active {
+        color: #001a33;
+        background: #ffd54a;
+        /* active gold */
+        box-shadow: 0 8px 20px rgba(255, 213, 74, .35);
+        border-color: rgba(255, 213, 74, .45);
+    }
+
+    /* Mobile: dock tabs top */
+    @media (max-width: 600px) {
+        #globe-tabs {
+            bottom: auto;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+        }
+    }
+
+    /* Floating pin cards */
+    .pin-card {
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.75);
+        color: #0b1c47;
+        font: 600 12px/1.3 "Inter", "Segoe UI", system-ui, Arial;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, .18);
+        border: 1px solid rgba(10, 23, 51, .08);
+        transform: translate(-50%, -130%);
+        pointer-events: auto;
+        user-select: none;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+        text-align: center;
+        width: max-content;
+        min-width: 90px;
+    }
+
+    .pin-card strong {
+        font-weight: 800;
+        display: block;
+    }
+
+    .pin-card.hub {
+        background: #ffd54a;
+        color: #001a33;
+        box-shadow: 0 10px 28px rgba(255, 213, 74, .35);
+        border-color: rgba(255, 213, 74, .45);
+    }
+
+    @media (max-width: 480px) {
+        .pin-card:not(.hub) {
+            display: none;
+        }
+    }
+</style>
+
+<div id="globe-wrap">
+    <div id="holoGlobe" style="width:100%;height:100%;position:relative;"></div>
+    <div id="globe-tabs"></div>
+</div>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://unpkg.com/topojson-client@3"></script>
+<script src="https://unpkg.com/globe.gl@^2.33.0/dist/globe.gl.min.js"></script>
+
+<script>
+    (() => {
+        // ---- Brand palette
+        const CYAN = '#66ccff';
+        const CYAN_SOFT = 'rgba(102,204,255,0.28)';
+        const GOLD = '#ffd54a';
+
+        const elGlobe = document.getElementById('holoGlobe');
+        const elTabs = document.getElementById('globe-tabs');
+
+        // ---- Locations
+        const pins = [
+            // Hub Location (Canada)
+            { id: 'QC', name: 'Québec City', state: 'Québec', country: 'Canada', lat: 46.8139, lng: -71.2082, hub: true, size: 0.9 },
+
+            // North America Focus (US EB-5, E-2)
+            { id: 'NY', name: 'New York', state: 'New York', country: 'USA', lat: 40.7128, lng: -74.0060, size: 0.7 },
+
+            // European Golden Visa Focus
+            { id: 'LIS', name: 'Lisbon', state: 'Lisbon', country: 'Portugal', lat: 38.7223, lng: -9.1393, size: 0.7 },
+            { id: 'ATH', name: 'Athens', state: 'Attica', country: 'Greece', lat: 37.9838, lng: 23.7275, size: 0.7 },
+            { id: 'MAL', name: 'Valletta', state: 'Malta', country: 'Malta', lat: 35.9015, lng: 14.5144, size: 0.7 },
+            { id: 'MAD', name: 'Madrid', state: 'Madrid', country: 'Spain', lat: 40.4168, lng: -3.7038, size: 0.7 },
+
+            // Middle East Focus (UAE Investor Visa)
+            { id: 'DXB', name: 'Dubai', state: 'Dubai', country: 'UAE', lat: 25.2048, lng: 55.2708, size: 0.7 },
+
+            // Asia Focus (Key Business/Financial Centers)
+            { id: 'HKG', name: 'Hong Kong', state: '-', country: 'China', lat: 22.3193, lng: 114.1694, size: 0.7 },
+            { id: 'SNG', name: 'Singapore', state: '-', country: 'Singapore', lat: 1.3521, lng: 103.8198, size: 0.7 },
+
+            // Caribbean (CBI Programs)
+            { id: 'SKN', name: 'Basseterre', state: '-', country: 'St. Kitts & Nevis', lat: 17.2965, lng: -62.7230, size: 0.6 }
+        ];
+
+        const hub = pins.find(d => d.hub);
+
+        // Build arcs from hub to the rest
+        const arcs = pins.filter(d => !d.hub).map(d => ({
+            startLat: hub.lat, startLng: hub.lng, endLat: d.lat, endLng: d.lng,
+            color: [[GOLD], [CYAN]]
+        }));
+
+        // ---- Globe.gl instance (holographic look)
+        const world = Globe()
+            .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+            .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+            .backgroundColor('rgba(0,0,0,0)')
+            .showAtmosphere(true)
+            .atmosphereColor(CYAN)
+            .atmosphereAltitude(0.35)
+            (elGlobe);
+
+        // Renderer tuning
+        world.renderer().toneMappingExposure = 1.75;
+        world.renderer().setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+
+        // Globe material (see-through)
+        const gmat = world.globeMaterial();
+        gmat.color = new THREE.Color(0x0a1733);
+        gmat.transparent = true;
+        gmat.opacity = 0.12;              // main transparency knob
+        gmat.emissive = new THREE.Color(0x001a33);
+        gmat.emissiveIntensity = 0.35;
+        gmat.bumpScale = 0.05;
+
+        // Country outlines (thin cyan strokes, faint fill)
+        fetch('https://unpkg.com/world-atlas@2/countries-110m.json')
+            .then(r => r.json())
+            .then(topology => {
+                const { feature } = topojson;
+                const countries = feature(topology, topology.objects.countries).features;
+
+                world
+                    .polygonsData(countries)
+                    .polygonCapColor(() => 'rgba(255,255,255,0.03)')
+                    .polygonSideColor(() => 'rgba(0,0,0,0)')
+                    .polygonStrokeColor(() => CYAN_SOFT)
+                    .polygonAltitude(0.004)
+                    .polygonsTransitionDuration(0);
+            });
+
+        // Pins (use size prop so we can pulse later)
+        world.pointsData(pins)
+            .pointAltitude(d => d.hub ? 0.03 : 0.02)
+            .pointRadius(d => d.size)
+            .pointColor(d => d.hub ? GOLD : CYAN)
+            .pointLabel(d => `
+        <div style="padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.97);color:#0b1c47;font:600 12px/1.35 'Inter','Segoe UI',system-ui,Arial;box-shadow:0 8px 20px rgba(0,0,0,.18);">
+          ${d.name}
+        </div>
+      `);
+        // Always-visible floating cards at each pin
+        // Example: add region info into your data
+        // (add these fields to each pin entry if not present)
+        // { id:'QC', name:'Québec City', state:'Québec', country:'Canada', ... }
+
+        world
+            .htmlElementsData(pins)
+            .htmlLat(d => d.lat)
+            .htmlLng(d => d.lng)
+            .htmlAltitude(d => d.hub ? 0.06 : 0.045)
+            .htmlElement(d => {
+                const el = document.createElement('div');
+                el.className = 'pin-card' + (d.hub ? ' hub' : '');
+                el.innerHTML = `
+        <strong>${d.country || 'Unknown Country'}</strong>
+        ${d.state || ''}<br>
+        ${d.name || d.city || ''}
+      `;
+
+                // Click → fly to location + pulse pin
+                el.addEventListener('click', () => {
+                    if (typeof selectLocation === 'function') {
+                        selectLocation(d.id, true);
+                    } else {
+                        world.pointOfView({ lat: d.lat, lng: d.lng, altitude: 1.7 }, 900);
+                    }
+                });
+                return el;
+            });
+
+        // Pulsing rings (hologram pings)
+        world.ringsData(pins.map(d => ({ ...d, maxR: d.hub ? 7 : 5 })))
+            .ringAltitude(0.014)
+            .ringMaxRadius('maxR')
+            .ringColor(() => t => `rgba(102,204,255,${1 - t})`)
+            .ringPropagationSpeed(0.9)
+            .ringRepeatPeriod(1700);
+
+        // Arcs
+        world.arcsData(arcs)
+            .arcColor('color')
+            .arcAltitude(() => 0.26)
+            .arcStroke(0.7)
+            .arcDashLength(0.35)
+            .arcDashGap(0.7)
+            .arcDashAnimateTime(2100);
+
+        // Controls
+        const controls = world.controls();
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.35;
+        controls.enableZoom = false;
+        controls.enablePan = false;
+
+        // Lighting
+        const scene = world.scene();
+        scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+        const dir = new THREE.DirectionalLight(0xffffff, 1.1);
+        dir.position.set(3, 2, 1);
+        scene.add(dir);
+
+        // ---- Extra hologram layers (wireframe grid, outer glow, scanner ring)
+        const R = 100; // Globe.gl's internal radius ~100 units
+
+        // Outer glow shell
+        const glow = new THREE.Mesh(
+            new THREE.SphereGeometry(R * 1.06, 64, 64),
+            new THREE.MeshBasicMaterial({
+                color: new THREE.Color(CYAN),
+                transparent: true,
+                opacity: 0.12,
+                blending: THREE.AdditiveBlending,
+                side: THREE.BackSide,
+                depthWrite: false
+            })
+        );
+        scene.add(glow);
+
+        // Scanner ring
+        const ringGeo = new THREE.TorusGeometry(R * 1.005, R * 0.0025, 8, 256);
+        const ringMat = new THREE.MeshBasicMaterial({
+            color: CYAN,
+            transparent: true,
+            opacity: 0.35,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+        const scanRing = new THREE.Mesh(ringGeo, ringMat);
+        scanRing.rotation.x = Math.PI / 2; // equatorial
+        scene.add(scanRing);
+
+        // Animate hologram layers
+        const clock = new THREE.Clock();
+        (function animateExtras() {
+            requestAnimationFrame(animateExtras);
+            const t = clock.getElapsedTime();
+            glow.rotation.y += 0.0005;
+            scanRing.rotation.z = t * 0.25; // slow sweep
+        })();
+
+        // ---- Tabs UI
+        function renderTabs(activeId) {
+            elTabs.innerHTML = '';
+            pins.forEach(loc => {
+                const b = document.createElement('button');
+                b.className = 'vgp-tab' + (loc.id === activeId ? ' active' : '');
+                b.type = 'button';
+                b.textContent = loc.name || loc.label || loc.id;
+                b.setAttribute('data-id', loc.id);
+                b.addEventListener('click', () => selectLocation(loc.id, true));
+                elTabs.appendChild(b);
+            });
+        }
+        function setActiveTab(id) {
+            [...elTabs.children].forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-id') === id);
+            });
+        }
+        function pulsePin(id) {
+            const idx = pins.findIndex(d => d.id === id);
+            if (idx < 0) return;
+            const copy = pins.map(d => ({ ...d }));
+            const orig = copy[idx].size ?? (copy[idx].hub ? 0.90 : 0.70);
+            copy[idx].size = orig * 1.22;
+            world.pointsData(copy);
+            setTimeout(() => { copy[idx].size = orig; world.pointsData(copy); }, 420);
+        }
+        function selectLocation(id, doPulse = false) {
+            const loc = pins.find(d => d.id === id);
+            if (!loc) return;
+            setActiveTab(id);
+            if (typeof loc.lat === 'number' && typeof loc.lng === 'number') {
+                world.pointOfView({ lat: loc.lat, lng: loc.lng, altitude: 1.7 }, 900);
+            }
+            if (doPulse) pulsePin(id);
+        }
+
+        const defaultId = (pins.find(d => d.hub)?.id) || (pins[0]?.id);
+        renderTabs(defaultId);
+        if (defaultId) setActiveTab(defaultId);
+
+        // Hover → sync active tab (optional)
+        if (typeof world.onPointHover === 'function') {
+            world.onPointHover(obj => { if (obj && obj.id) setActiveTab(obj.id); });
+        }
+
+        // Click pin → fly & sync tab (fallback if not using onPointClick)
+        elGlobe.addEventListener('click', () => {
+            const obj = world.hoveredObject?.();
+            if (obj && obj.id) selectLocation(obj.id, true);
+        });
+
+        // Initial POV
+        world.pointOfView({ lat: hub.lat, lng: hub.lng, altitude: 2.0 }, 0);
+
+        // Responsive
+        function onResize() {
+            const { clientWidth: w, clientHeight: h } = document.getElementById('globe-wrap');
+            world.renderer().setSize(w, h, false);
+            const cam = world.camera();
+            cam.aspect = w / h;
+            cam.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', onResize);
+        onResize();
+
+        // Mobile tuning
+        if (window.matchMedia('(max-width: 600px)').matches) {
+            controls.autoRotateSpeed = 0.25;
+            world.pointOfView({ lat: hub.lat, lng: hub.lng, altitude: 2.6 }, 0);
+        }
+    })();
+</script>
